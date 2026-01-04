@@ -4,6 +4,14 @@
   --pad: 1rem;
   --border: #e6e6e6;
   --muted: #666;
+  --glass-bg: rgba(255, 255, 255, 0.16);
+  --glass-border: rgba(255, 255, 255, 0.65);
+  --glass-shadow: rgba(31, 38, 135, 0.18);
+  --glass-inset: rgba(255, 255, 255, 0.30);
+  --glass-highlight: rgba(255, 255, 255, 0.10);
+  --nav-collapsed-width: 260px;
+  --nav-reveal-ms: 420ms;
+  --nav-fade-ms: 220ms;
 }
 
 * { box-sizing: border-box; }
@@ -14,6 +22,11 @@ body {
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   line-height: 1.55;
   color: #111;
+
+  background:
+    radial-gradient(1200px 600px at 20% 0%, rgba(0, 122, 255, 0.10), transparent 60%),
+    radial-gradient(1000px 700px at 90% 10%, rgba(88, 86, 214, 0.10), transparent 55%),
+    #fafafa;
 }
 
 .container {
@@ -22,27 +35,94 @@ body {
   padding: 0 var(--pad);
 }
 
+a {
+  text-decoration: none;
+}
+
 
 /* ◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆ Header ◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆ */
 .site-header {
-  border-bottom: 1px solid var(--border);
   position: sticky;
-  top: 0;
-  background: white;
+  top: 1rem;
+  z-index: 1000;
+  background: transparent;
+  border-bottom: none;
+  padding: 0.25rem 0;
 }
 
 .header-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 64px;
+  min-height: 56px;
   gap: 1rem;
   flex-wrap: wrap;
+  position: relative;
+
+  border-radius: 999px;
+  padding: 0.55rem 0.85rem;
+
+  background: rgba(255, 255, 255, 0.55);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  backdrop-filter: blur(18px) saturate(180%);
+
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.08),
+    0 1px 0 rgba(255, 255, 255, 0.6) inset;
+}
+
+.header-inner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(255,255,255,0.65),
+    rgba(255,255,255,0.10)
+  );
+  opacity: 0.5;
+}
+
+site-header .header-inner {
+  width: 100%;
+  overflow: hidden;
+  transition: clip-path var(--nav-reveal-ms) cubic-bezier(0.2, 0.8, 0.2, 1);
+  clip-path: inset(0 0 0 0 round 999px);
+}
+
+site-header[data-expanded="false"] .header-inner {
+  clip-path: inset(0 calc(100% - var(--nav-collapsed-width)) 0 0 round 999px);
+}
+
+site-header[data-expanded="true"] .header-inner {
+  clip-path: inset(0 0 0 0 round 999px);
+}
+
+site-header .site-nav {
+  opacity: 0;
+  transform: translateY(-3px);
+  pointer-events: none;
+  transition:
+    opacity var(--nav-fade-ms) ease,
+    transform var(--nav-fade-ms) ease;
+}
+
+site-header[data-expanded="true"] .site-nav {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  transition-delay: var(--nav-reveal-ms);
+}
+
+site-header[data-expanded="false"] .site-nav {
+  transition-delay: 0ms;
 }
 
 .site-title {
   font-weight: 700;
-  text-decoration: none;
   color: inherit;
 }
 
@@ -53,18 +133,91 @@ body {
 }
 
 .site-nav a {
-  text-decoration: none;
   color: inherit;
-  padding: 0.35rem 0.5rem;
-  border-radius: 8px;
+  padding: 0.4rem 0.65rem;
+  border-radius: 999px;
+  transition: background 150ms ease, transform 150ms ease;
 }
 
 .site-nav a:hover {
-  background: #f4f4f4;
+  background: rgba(0, 0, 0, 0.06);
+  transform: translateY(-1px);
 }
 
 .site-nav a.active {
-  background: #efefef;
+  background: rgba(0, 0, 0, 0.10);
+}
+
+/* Apply “liquid glass” to your pill header, hero overlay, and carousel dots */
+.header-inner,
+.hero-overlay,
+.carousel-dots {
+  position: relative;
+  isolation: isolate; /* keeps the pseudo-element layering predictable */
+
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(14px) saturate(180%);
+  backdrop-filter: blur(14px) saturate(180%);
+
+  border: 1px solid var(--glass-border);
+
+  /* Outer depth + inner glow (the combo is key) */
+  box-shadow:
+    0 8px 32px var(--glass-shadow),
+    inset 0 4px 20px var(--glass-inset);
+}
+
+/* The “liquid” shine/reflection layer (pseudo-element trick) */
+.header-inner::after,
+.hero-overlay::after,
+.carousel-dots::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+
+  background: var(--glass-highlight);
+  -webkit-backdrop-filter: blur(1px);
+  backdrop-filter: blur(1px);
+
+  /* Edge highlights / specular streaks */
+  box-shadow:
+    inset -10px -8px 0px -11px rgba(255, 255, 255, 1),
+    inset 0px -9px 0px -8px rgba(255, 255, 255, 1);
+
+  opacity: 0.65;
+  z-index: -1;
+
+  /* Subtle “wet” finish */
+  filter: blur(1px) brightness(115%);
+}
+
+/* Optional: add a soft top sheen that reads as “glass curvature” */
+.header-inner::before,
+.hero-overlay::before,
+.carousel-dots::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.55;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.55),
+    rgba(255, 255, 255, 0.08) 55%,
+    rgba(255, 255, 255, 0.00)
+  );
+}
+
+/* Ensure content sits above the sheen layers */
+.header-inner > *,
+.hero-overlay > *,
+.carousel-dots > * {
+  position: relative;
+  z-index: 1;
 }
 
 
@@ -79,12 +232,6 @@ main.container {
 
 a {
   color: inherit;
-  text-decoration-thickness: 0.08em;
-  text-underline-offset: 0.18em;
-}
-
-a:hover {
-  text-decoration: underline;
 }
 
 h1, h2, h3 {
@@ -131,14 +278,6 @@ h1 {
 .project-title {
   margin: 0 0 0.25rem;
   font-size: 1.25rem;
-}
-
-.project-title a {
-  text-decoration: none;
-}
-
-.project-title a:hover {
-  text-decoration: underline;
 }
 
 .project-meta {
@@ -192,3 +331,47 @@ h1 {
 }
 
 
+/* ◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆ Dark Mode ◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆ */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --glass-bg: rgba(20, 20, 24, 0.40);
+    --glass-border: rgba(255, 255, 255, 0.14);
+    --glass-shadow: rgba(0, 0, 0, 0.35);
+    --glass-inset: rgba(255, 255, 255, 0.10);
+    --glass-highlight: rgba(255, 255, 255, 0.06);
+  }
+
+  .header-inner,
+  .hero-overlay,
+  .carousel-dots {
+    box-shadow:
+      0 10px 34px var(--glass-shadow),
+      inset 0 4px 18px var(--glass-inset);
+  }
+  
+  body { color: #f5f5f5; background: #0b0b0f; }
+
+  .header-inner {
+    background: rgba(20, 20, 24, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow:
+      0 10px 30px rgba(0, 0, 0, 0.35),
+      0 1px 0 rgba(255, 255, 255, 0.10) inset;
+  }
+
+  .site-nav a:hover { background: rgba(255, 255, 255, 0.10); }
+  .site-nav a.active { background: rgba(255, 255, 255, 0.14); }
+}
+
+
+@media (hover: none), (pointer: coarse) {
+  site-header[data-expanded="false"] .header-inner {
+    clip-path: inset(0 0 0 0 round 999px);
+  }
+  site-header[data-expanded="false"] .site-nav {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+    transition-delay: 0ms;
+  }
+}

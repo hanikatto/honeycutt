@@ -47,6 +47,72 @@ class SiteHeader extends HTMLElement {
     `;
 
     setActiveNav(this);
+
+    // Default: collapsed
+    this.dataset.expanded = "false";
+
+    // On touch / coarse pointers, keep expanded so navigation is usable.
+    const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+    if (!finePointer) {
+      this.dataset.expanded = "true";
+      return;
+    }
+
+    // Expand when mouse enters top quarter of viewport.
+    // Keep expanded while hovering/focusing the header/nav so it doesn't collapse mid-click.
+    let collapseTimer = null;
+
+    const setExpanded = (val) => {
+      this.dataset.expanded = val ? "true" : "false";
+    };
+
+    const isInteractingWithHeader = () =>
+      this.matches(":hover") || this.matches(":focus-within");
+
+    const maybeExpandOrCollapse = (y) => {
+      const hotZone = window.innerHeight * 0.25;
+      const inHotZone = y <= hotZone;
+
+      if (inHotZone || isInteractingWithHeader()) {
+        if (collapseTimer) {
+          clearTimeout(collapseTimer);
+          collapseTimer = null;
+        }
+        setExpanded(true);
+      } else {
+        // Slight delay prevents jitter while moving the mouse around
+        if (!collapseTimer) {
+          collapseTimer = setTimeout(() => {
+            collapseTimer = null;
+            if (!isInteractingWithHeader()) setExpanded(false);
+          }, 300);
+        }
+      }
+    };
+
+    let lastY = null;
+    let raf = 0;
+
+    window.addEventListener(
+      "mousemove",
+      (e) => {
+        lastY = e.clientY;
+        if (raf) return;
+        raf = requestAnimationFrame(() => {
+          raf = 0;
+          maybeExpandOrCollapse(lastY ?? 99999);
+        });
+      },
+      { passive: true }
+    );
+
+    // If user tabs into the nav, keep it open.
+    this.addEventListener("focusin", () => setExpanded(true));
+
+    // If mouse leaves and isn't in hot zone, allow collapse.
+    this.addEventListener("mouseleave", () => {
+      maybeExpandOrCollapse(window.innerHeight); // force "not in hot zone"
+    });
   }
 }
 

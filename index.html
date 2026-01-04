@@ -3,19 +3,240 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Your Name</title>
+  <title>David Honeycutt - Home</title>
+
   <link rel="stylesheet" href="/css/main.css" />
   <script type="module" src="/js/components.js"></script>
+
+  <style>
+    site-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 2000;
+      pointer-events: none;
+    }
+    site-header .site-header,
+    site-header .site-header * {
+      pointer-events: auto;
+    }
+
+    site-header .site-header {
+      top: 0;
+      padding-top: 0.75rem;
+      background: transparent;
+      border-bottom: none;
+    }
+
+    .home-hero {
+      padding: 0;
+    }
+
+    .carousel {
+      width: 100%;
+      margin: 0 auto;
+      position: relative;
+
+      height: 75vh;
+      min-height: 420px;
+      max-height: 900px;
+    }
+
+    .slide-1 {
+      object-position: center 5%;
+    }
+
+    @media (min-width: 2001px) {
+      .carousel {
+        max-width: 2000px;
+        aspect-ratio: 4 / 3;
+        height: auto;
+        max-height: none;
+      }
+    }
+
+    .carousel-viewport {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      border-radius: 0;
+      background: #f2f2f2;
+    }
+
+    @media (min-width: 2001px) {
+      .carousel-viewport {
+        border-radius: 24px;
+        border: 1px solid var(--border);
+      }
+    }
+
+    .carousel-track {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      will-change: transform;
+      transition: transform 700ms ease;
+      transform: translateX(0%);
+    }
+
+    .carousel-slide {
+      flex: 0 0 100%;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      left: 1rem;
+      bottom: 1rem;
+      max-width: min(560px, calc(100% - 2rem));
+      padding: 0.9rem 1rem;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.55);
+      background: rgba(255, 255, 255, 0.65);
+      -webkit-backdrop-filter: blur(14px) saturate(160%);
+      backdrop-filter: blur(14px) saturate(160%);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.10);
+    }
+
+    .carousel-dots {
+      position: absolute;
+      right: 1rem;
+      bottom: 1rem;
+      display: flex;
+      gap: 0.4rem;
+      padding: 0.45rem 0.55rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.55);
+      background: rgba(255,255,255,0.55);
+      -webkit-backdrop-filter: blur(14px) saturate(160%);
+      backdrop-filter: blur(14px) saturate(160%);
+    }
+
+    .carousel-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      border: none;
+      background: rgba(0,0,0,0.25);
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .carousel-dot[aria-current="true"] {
+      background: rgba(0,0,0,0.65);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .carousel-track { transition: none; }
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .carousel-viewport { background: #15151a; }
+
+      @media (min-width: 2001px) {
+        .carousel-viewport { border-color: rgba(255,255,255,0.12); }
+      }
+
+      .hero-overlay,
+      .carousel-dots {
+        background: rgba(20, 20, 24, 0.55);
+        border-color: rgba(255,255,255,0.12);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+      }
+
+      .carousel-dot { background: rgba(255,255,255,0.25); }
+      .carousel-dot[aria-current="true"] { background: rgba(255,255,255,0.75); }
+    }
+  </style>
 </head>
 
 <body>
   <site-header></site-header>
 
-  <main class="container">
-    <h1>Your Name</h1>
-    <p>PhD Candidate in X at Y. I work on ...</p>
+  <main id="main" class="home-hero">
+    <section class="carousel" aria-label="Photo carousel of David Honeycutt">
+      <div class="carousel-viewport">
+        <div class="carousel-track" id="carouselTrack">
+          <img class="carousel-slide slide-1" src="/assets/images/me-1.jpg" alt="Photo of David Honeycutt (1 of 5)" />
+          <img class="carousel-slide" src="/assets/images/me-2.jpg" alt="Photo of David Honeycutt (2 of 5)" />
+          <img class="carousel-slide" src="/assets/images/me-3.jpg" alt="Photo of David Honeycutt (3 of 5)" />
+          <img class="carousel-slide" src="/assets/images/me-4.jpg" alt="Photo of David Honeycutt (4 of 5)" />
+          <!--<img class="carousel-slide" src="/assets/images/me-5.jpg" alt="Photo of David Honeycutt (5 of 5)" /> -->
+        </div>
+      </div>
+      <div class="carousel-dots" id="carouselDots" aria-label="Choose a slide"></div>
+    </section>
+
+    <div class="container">
+      <section style="padding: 1.5rem 0 0;">
+        <p>
+          Welcome! This site highlights my research projects, publications, and academic work.
+        </p>
+      </section>
+    </div>
   </main>
 
   <site-footer></site-footer>
+
+  <script>
+    (function () {
+      const track = document.getElementById("carouselTrack");
+      const dotsWrap = document.getElementById("carouselDots");
+      if (!track || !dotsWrap) return;
+
+      const slides = Array.from(track.querySelectorAll(".carousel-slide"));
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      let index = 0;
+      let timer = null;
+
+      function goTo(i) {
+        index = (i + slides.length) % slides.length;
+        track.style.transform = `translateX(${-index * 100}%)`;
+
+        dotsWrap.querySelectorAll("button").forEach((btn, btnIndex) => {
+          btn.setAttribute("aria-current", btnIndex === index ? "true" : "false");
+        });
+      }
+
+      function start() {
+        if (prefersReducedMotion) return;
+        stop();
+        timer = setInterval(() => goTo(index + 1), 5000);
+      }
+
+      function stop() {
+        if (timer) {
+          clearInterval(timer);
+          timer = null;
+        }
+      }
+
+      slides.forEach((_, i) => {
+        const btn = document.createElement("button");
+        btn.className = "carousel-dot";
+        btn.type = "button";
+        btn.setAttribute("aria-label", `Go to slide ${i + 1}`);
+        btn.setAttribute("aria-current", i === 0 ? "true" : "false");
+        btn.addEventListener("click", () => {
+          goTo(i);
+          start();
+        });
+        dotsWrap.appendChild(btn);
+      });
+
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) stop();
+        else start();
+      });
+
+      goTo(0);
+      start();
+    })();
+  </script>
 </body>
 </html>
