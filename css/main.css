@@ -10,7 +10,7 @@
   --glass-inset: rgba(255, 255, 255, 0.30);
   --glass-highlight: rgba(255, 255, 255, 0.10);
   --nav-collapsed-width: 260px;
-  --nav-reveal-ms: 420ms;
+  --nav-reveal-ms: 320ms;
   --nav-fade-ms: 220ms;
 }
 
@@ -60,7 +60,7 @@ a {
   position: relative;
 
   border-radius: 999px;
-  padding: 0.55rem 0.85rem;
+  padding: 0.55rem 1.85rem;
 
   background: rgba(255, 255, 255, 0.55);
   -webkit-backdrop-filter: blur(18px) saturate(180%);
@@ -122,7 +122,7 @@ site-header[data-expanded="false"] .site-nav {
 }
 
 .site-title {
-  font-weight: 700;
+  font-weight: 200;
   color: inherit;
 }
 

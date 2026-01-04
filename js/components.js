@@ -46,6 +46,22 @@ class SiteHeader extends HTMLElement {
       </header>
     `;
 
+    // Auto-size collapsed width to the title text (plus padding)
+    const titleEl = this.querySelector(".site-title");
+    if (titleEl) {
+      // Wait a frame so layout is accurate (fonts/styles applied)
+      requestAnimationFrame(() => {
+        const rect = titleEl.getBoundingClientRect();
+
+        // Add room for left/right padding inside the pill + a little breathing space
+        const extra = 64; // px (tweak if you want tighter/looser)
+        const collapsedWidth = Math.ceil(rect.width + extra);
+
+        this.style.setProperty("--nav-collapsed-width", `${collapsedWidth}px`);
+      });
+    }
+
+
     setActiveNav(this);
 
     // Default: collapsed
