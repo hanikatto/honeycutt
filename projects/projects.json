@@ -1,0 +1,28 @@
+[
+  {
+    "title": "Esperanto Dictionary",
+    "slug": "esperanto-dictionary",
+    "summary": "A lightweight dictionary/lookup tool for Esperanto with fast search and clean UI.",
+    "tags": ["NLP", "Lexicography", "Web"],
+    "year": 2025,
+    "status": "Active",
+    "links": {
+      "paper": "",
+      "code": "",
+      "demo": ""
+    }
+  },
+  {
+    "title": "Faroese Dictionary",
+    "slug": "faroese-dictionary",
+    "summary": "Digitization and search interface for Faroese lexical resources.",
+    "tags": ["Corpus", "Low-resource", "Web"],
+    "year": 2025,
+    "status": "Active",
+    "links": {
+      "paper": "",
+      "code": "",
+      "demo": ""
+    }
+  }
+]

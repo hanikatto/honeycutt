@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Projects — Your Name</title>
+  <link rel="stylesheet" href="/css/main.css" />
+  <script type="module" src="/js/components.js"></script>
+  <script type="module" src="/js/projects.js"></script>
+</head>
+
+<body>
+  <site-header></site-header>
+
+  <main id="main" class="container">
+    <h1>Projects</h1>
+    <p>A selection of research and software projects.</p>
+
+    <div class="projects-controls">
+      <input id="project-search" type="search" placeholder="Search projects…" autocomplete="off" />
+    </div>
+
+    <div id="projects-list" class="projects-list" aria-live="polite"></div>
+    <p id="projects-empty" style="display:none;">No matching projects.</p>
+  </main>
+
+  <site-footer></site-footer>
+</body>
+</html>
